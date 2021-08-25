@@ -1,6 +1,31 @@
 import Product from "../Entities/ProductModel";
 import express, { Router } from "express";
 import auth from "../core/middleware";
+import Joi from "joi";
+
+const addProductValidation = (
+  req: express.Request,
+  res: express.Response,
+  next: Function
+) => {
+  const schema = Joi.object({
+    name: Joi.string().required().min(3),
+    price: Joi.number().min(1),
+    quantity: Joi.number().min(1),
+  });
+  const { error, value } = schema.validate(req.body, {
+    abortEarly: false,
+  });
+  console.log(error?.message);
+  
+  if (error) {
+    const msg = error.details.map((e) => {
+      return e.message;
+    });
+    return res.status(400).send(msg);
+  }
+  next()
+};
 
 const productRouter = Router();
 
@@ -26,6 +51,7 @@ productRouter.get(
 productRouter.post(
   "/",
   auth,
+  addProductValidation,
   async (req: express.Request, res: express.Response) => {
     const product = new Product({
       name: req.body.name,

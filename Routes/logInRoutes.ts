@@ -15,7 +15,7 @@ logInRouter.post("/", async (req, res) => {
         return res.status(400).send('invalid password');
     }
     //token
-    const token = jwt.sign({_id:user._id,role:user.role}, "nandu");
+    const token = jwt.sign({_id:user._id,role:user.role}, "qwertyuiop");
     res.header('auth-token', token);
     res.send('Log in success!!');
 });
